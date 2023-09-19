@@ -116,6 +116,12 @@ void moveTo(float pos){
   desiredPos = pos;
   unsigned long currentMillis = millis();
 
+  float currDeg = currEnc / 3200.0 * 360.0;
+  while (currDeg <= -360) currDeg += 360.0;
+  while (currDeg >= 360) currDeg -= 360.0;
+  if (currDeg > 180) currDeg -= 360.0;
+  if (currDeg < -180) currDeg += 360.0;
+
   if(currentMillis - previousMillis > interval){
 
     error_val = desiredPos - currEnc;
@@ -139,6 +145,12 @@ void stop(){
 
   unsigned long currentMillis = millis();
 
+  float currDeg = currEnc / 3200.0 * 360.0;
+  while (currDeg <= -360) currDeg += 360.0;
+  while (currDeg >= 360) currDeg -= 360.0;
+  if (currDeg > 180) currDeg -= 360.0;
+  if (currDeg < -180) currDeg += 360.0;
+
   if(currentMillis - previousMillis > interval){
 
     previousMillis = currentMillis;  
@@ -146,6 +158,8 @@ void stop(){
 
     Serial.print("\tEncoder Value: ");
     Serial.println(currEnc);
+    Serial.print("\tPosition: ");
+    Serial.println(currDeg);
   }
 }
 
