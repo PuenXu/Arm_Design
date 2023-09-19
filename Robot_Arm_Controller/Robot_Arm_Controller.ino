@@ -20,6 +20,7 @@ Encoder enc(e_en1, e_en2);
 
 // Variables for PID Control
 long currEnc = 0;
+long currDeg = 0;
 long current_val = 0;
 long error_val = 0;
 int desiredPos = 0;
@@ -96,7 +97,6 @@ void loop() {
     case IDLE:
 
       moveTo(0);
-
       break;
 
     case MOVE:
@@ -106,10 +106,7 @@ void loop() {
 
     case STOP:
 
-      controlMotor(0, L298N::BACKWARD);
-      Serial.print("\tEncoder Value: ");
-      Serial.println(currEnc);
-
+      stop();
       break;
   }
 }
@@ -135,13 +132,20 @@ void moveTo(float pos){
     Serial.print(error_val);
     Serial.print("\tDirection: ");
     Serial.println(direction);
+  }
+}
 
-    if (Serial.available()) {
+void stop(){
 
-      desiredPos = Serial.parseInt();
-      Serial.print("New Desired Position: ");
-      Serial.print(desiredPos);
-    }
+  unsigned long currentMillis = millis();
+
+  if(currentMillis - previousMillis > interval){
+
+    previousMillis = currentMillis;  
+    controlMotor(0, L298N::BACKWARD);  
+
+    Serial.print("\tEncoder Value: ");
+    Serial.println(currEnc);
   }
 }
 
