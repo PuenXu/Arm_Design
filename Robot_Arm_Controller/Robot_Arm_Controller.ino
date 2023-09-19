@@ -3,7 +3,7 @@
 #include <L298N.h>
 
 // PID Control
-double kp = 2;
+double kp = 1;
 double kd = 0.003;
 double ki = 0;
 
@@ -26,7 +26,6 @@ long error_val = 0;
 int desiredPos = 0;
 long previousMillis = 0; 
 long interval = 10;  
-unsigned short driverPwm = 0;
 long error_val_init = 0;
 long previousTime = 0;
 long elapsedTime = 0;
@@ -115,25 +114,26 @@ void moveTo(float pos){
     
   desiredPos = pos;
   unsigned long currentMillis = millis();
+  int baseEffort = 25;
 
   float currDeg = currEnc / 3200.0 * 360.0;
   while (currDeg <= -360) currDeg += 360.0;
   while (currDeg >= 360) currDeg -= 360.0;
-  if (currDeg > 180) currDeg -= 360.0;
-  if (currDeg < -180) currDeg += 360.0;
+  // if (currDeg > 180) currDeg -= 360.0;
+  // if (currDeg < -180) currDeg += 360.0;
 
   if(currentMillis - previousMillis > interval){
 
-    error_val = desiredPos - currEnc;
-    int effort = kp*error_val;
+    error_val = desiredPos - currDeg;
+    int effort = baseEffort + kp*error_val;
     int direction = (abs(error_val > 0 ) ? L298N::FORWARD : L298N::BACKWARD);
     previousMillis = currentMillis;  
     controlMotor(effort, direction);  
 
-    Serial.print("PWM value: ");
-    Serial.print(driverPwm);
     Serial.print("\tEncoder Value: ");
     Serial.print(currEnc);
+    Serial.print("\tPosition: ");
+    Serial.print(currDeg);
     Serial.print("\tError value: ");
     Serial.print(error_val);
     Serial.print("\tDirection: ");
@@ -148,16 +148,16 @@ void stop(){
   float currDeg = currEnc / 3200.0 * 360.0;
   while (currDeg <= -360) currDeg += 360.0;
   while (currDeg >= 360) currDeg -= 360.0;
-  if (currDeg > 180) currDeg -= 360.0;
-  if (currDeg < -180) currDeg += 360.0;
+  // if (currDeg > 180) currDeg -= 360.0;
+  // if (currDeg < -180) currDeg += 360.0;
 
   if(currentMillis - previousMillis > interval){
 
     previousMillis = currentMillis;  
     controlMotor(0, L298N::BACKWARD);  
 
-    Serial.print("\tEncoder Value: ");
-    Serial.println(currEnc);
+    Serial.print("Encoder Value: ");
+    Serial.print(currEnc);
     Serial.print("\tPosition: ");
     Serial.println(currDeg);
   }
