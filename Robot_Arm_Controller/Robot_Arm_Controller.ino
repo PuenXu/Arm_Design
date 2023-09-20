@@ -3,9 +3,9 @@
 #include <L298N.h>
 
 // PID Control
-double kp = 1;
-double kd = 0.003;
-double ki = 0;
+double kp = 3.8;
+double kd = 0.8;
+double ki = 0.00005;
 
 // Pin Assignment
 int m_ena_1 = 9;
@@ -25,7 +25,7 @@ long current_val = 0;
 long error_val = 0;
 int desiredPos = 0;
 long previousMillis = 0; 
-long interval = 10;  
+long interval = 5;  
 long error_val_init = 0;
 long previousTime = 0;
 long elapsedTime = 0;
@@ -114,21 +114,28 @@ void moveTo(float pos){
     
   desiredPos = pos;
   unsigned long currentMillis = millis();
-  int baseEffort = 25;
+  //int baseEffort = 25;
 
   float currDeg = currEnc / 3200.0 * 360.0;
   while (currDeg <= -360) currDeg += 360.0;
   while (currDeg >= 360) currDeg -= 360.0;
+  currDeg = int(currDeg);
   // if (currDeg > 180) currDeg -= 360.0;
   // if (currDeg < -180) currDeg += 360.0;
 
   if(currentMillis - previousMillis > interval){
 
+    elapsedTime = currentMillis - previousTime;
     error_val = desiredPos - currDeg;
-    int effort = baseEffort + kp*error_val;
+    cumError += error_val * elapsedTime;
+    rateError = (error_val - error_val_init)/elapsedTime;
+    int effort = kp*error_val;
+    int effort_pid = kp * error_val + ki * cumError + kd * rateError;
     int direction = (abs(error_val > 0 ) ? L298N::FORWARD : L298N::BACKWARD);
     previousMillis = currentMillis;  
-    controlMotor(effort, direction);  
+    error_val_init = error_val;
+    previousTime = currentMillis;
+    controlMotor(effort_pid, direction);  
 
     Serial.print("\tEncoder Value: ");
     Serial.print(currEnc);
