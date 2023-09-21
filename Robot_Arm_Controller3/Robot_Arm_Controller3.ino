@@ -5,7 +5,7 @@
 // PID Control
 double kp = 0.4;
 double kd = 1.2;
-double ki = 0.02;
+double ki = 0.018;
 
 // Pin Assignment
 int m_ena_1 = 9;
@@ -18,7 +18,7 @@ int e_en1 = 5;
 L298N motor(m_ena_1, m_in1_1, m_in2_1);
 Encoder enc(e_en1, e_en2);
 
-// Global Variables
+// PID Variables
 int interval = 10;
 long previousMillis = 0; 
 int desiredPos = 0;
@@ -26,6 +26,7 @@ long error = 0;
 long prevError = 0;
 long rateError = 0;
 long cumError = 0;
+// bool moved = false;
 
 // Variables for Serial Communication
 const byte numChars = 32;
@@ -95,9 +96,9 @@ void moveTo(float pos){
   
   unsigned long currentMillis = millis();
   long currEnc = enc.read();
-  float currDeg = currEnc / 2800.0 * 360.0;
-  while (currDeg <= -360) currDeg += 360.0;
-  while (currDeg >= 360) currDeg -= 360.0;
+  // float currDeg = currEnc / 2800.0 * 360.0;
+  // while (currDeg <= -360) currDeg += 360.0;
+  // while (currDeg >= 360) currDeg -= 360.0;
 
   if(currentMillis - previousMillis > interval){
 
@@ -141,6 +142,8 @@ void moveTo(float pos){
     previousMillis = currentMillis; 
     prevError = error; 
   }
+
+
 }
 
 void stop(){
@@ -234,21 +237,8 @@ void showParsedData() {
     Serial.print("Theta 4: ");
     Serial.println(theta_4);
 
-    // //currEnc = 0;
-    // //currDeg = 0;
-    // current_val = 0;
-    // error_val = 0;
-    // //desiredPos = 0;
-    // //previousMillis = 0; 
-    // //interval = 20;  
-    // error_val_init = 0;
-    // //previousTime = 0;
-    // elapsedTime = 0;
-    // cumError = 0;
-    // rateError = 0;
-    // move = true;
-
     state = MOVE;
+
     Serial.println("State: MOVE");
   }
   else if (command[0] == 'S'){
@@ -257,6 +247,7 @@ void showParsedData() {
     Serial.println(command);
 
     state = STOP;
+
     Serial.println("State: STOP");
   }
   else if (command[0] == 'I'){
@@ -265,6 +256,7 @@ void showParsedData() {
     Serial.println(command);
 
     state = IDLE;
+
     Serial.println("State: IDLE");
   }
 }
