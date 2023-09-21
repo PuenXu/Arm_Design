@@ -3,9 +3,9 @@
 #include <L298N.h>
 
 // PID Control
-double kp = 2;
-double kd = 0.003;
-double ki = 0;
+double kp = 3.8;
+double kd = 0.8;
+double ki = 0.00005;
 
 // Pin Assignment
 int m_ena_1 = 9;
@@ -25,8 +25,7 @@ long current_val = 0;
 long error_val = 0;
 int desiredPos = 0;
 long previousMillis = 0; 
-long interval = 10;  
-unsigned short driverPwm = 0;
+long interval = 5;  
 long error_val_init = 0;
 long previousTime = 0;
 long elapsedTime = 0;
@@ -115,19 +114,33 @@ void moveTo(float pos){
     
   desiredPos = pos;
   unsigned long currentMillis = millis();
+  //int baseEffort = 25;
+
+  float currDeg = currEnc / 3200.0 * 360.0;
+  while (currDeg <= -360) currDeg += 360.0;
+  while (currDeg >= 360) currDeg -= 360.0;
+  currDeg = int(currDeg);
+  // if (currDeg > 180) currDeg -= 360.0;
+  // if (currDeg < -180) currDeg += 360.0;
 
   if(currentMillis - previousMillis > interval){
 
-    error_val = desiredPos - currEnc;
+    elapsedTime = currentMillis - previousTime;
+    error_val = desiredPos - currDeg;
+    cumError += error_val * elapsedTime;
+    rateError = (error_val - error_val_init)/elapsedTime;
     int effort = kp*error_val;
+    int effort_pid = kp * error_val + ki * cumError + kd * rateError;
     int direction = (abs(error_val > 0 ) ? L298N::FORWARD : L298N::BACKWARD);
     previousMillis = currentMillis;  
-    controlMotor(effort, direction);  
+    error_val_init = error_val;
+    previousTime = currentMillis;
+    controlMotor(effort_pid, direction);  
 
-    Serial.print("PWM value: ");
-    Serial.print(driverPwm);
     Serial.print("\tEncoder Value: ");
     Serial.print(currEnc);
+    Serial.print("\tPosition: ");
+    Serial.print(currDeg);
     Serial.print("\tError value: ");
     Serial.print(error_val);
     Serial.print("\tDirection: ");
@@ -139,13 +152,21 @@ void stop(){
 
   unsigned long currentMillis = millis();
 
+  float currDeg = currEnc / 3200.0 * 360.0;
+  while (currDeg <= -360) currDeg += 360.0;
+  while (currDeg >= 360) currDeg -= 360.0;
+  // if (currDeg > 180) currDeg -= 360.0;
+  // if (currDeg < -180) currDeg += 360.0;
+
   if(currentMillis - previousMillis > interval){
 
     previousMillis = currentMillis;  
     controlMotor(0, L298N::BACKWARD);  
 
-    Serial.print("\tEncoder Value: ");
-    Serial.println(currEnc);
+    Serial.print("Encoder Value: ");
+    Serial.print(currEnc);
+    Serial.print("\tPosition: ");
+    Serial.println(currDeg);
   }
 }
 
