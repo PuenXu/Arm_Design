@@ -5,7 +5,7 @@
 // PID Control
 double kp = 0.4;
 double kd = 1.2;
-double ki = 0.000;
+double ki = 0.02;
 
 // Pin Assignment
 int m_ena_1 = 9;
@@ -61,10 +61,15 @@ void loop() {
 
     error = desiredPos - currEnc;
     rateError = error - prevError;
+    cumError = cumError + error;
+    if (cumError > 2000) cumError = 2000;
+    if (cumError < -2000) cumError = -2000;    
 
     //int speed = kp * abs(error) - kd * abs(rateError);
     int speed = kp * abs(error);
-    if (speed > 70) speed = 70 - kd * abs(rateError);
+    if (speed > 70) speed = 70;
+    speed = speed - kd * abs(rateError) + ki * abs(cumError);
+    if (speed > 100) speed = 100;
     if (speed < 0) speed = 0;
 
     if(error > 0){
@@ -107,6 +112,8 @@ void loop() {
     Serial.print(error);
     Serial.print("\tRate Error: ");
     Serial.print(rateError);
+    Serial.print("\tCum Error: ");
+    Serial.print(cumError);
     // Serial.print("\tBase Speed: ");
     // Serial.print(baseSpeed);
     Serial.print("\tSpeed: ");
