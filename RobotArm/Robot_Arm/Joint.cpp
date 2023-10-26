@@ -28,32 +28,37 @@ Joint::Joint(int dirPin, int stepPin, int stepsPerRevolution)
     : stepper(1, dirPin, stepPin) {
     this->stepsPerRevolution = stepsPerRevolution;
     stepper.setMaxSpeed(1000); // Set your desired maximum speed in steps per second
-    stepper.setAcceleration(500); // Set your desired acceleration in steps per second^2
+    stepper.setAcceleration(50); // Set your desired acceleration in steps per second^2
 }
 
 void Joint::setSpeed(float rpm) {
-    stepper.setMaxSpeed(rpm);
+    stepper.setSpeed(rpm);
 }
 
-void Joint::move(int steps) {
-    stepper.move(steps);
-    while (stepper.run()) {
-        // Run the stepper motor
-    }
+void Joint::moveTo() {
+    // stepper.moveTo(position);
+    // while (stepper.run()) {
+    //     // Run the stepper motor
+    // }
+    	// Change direction once the motor reaches target position
+	if (stepper.distanceToGo() == 0) {
+		  if(Serial.available()){ 
+        int desiredPos = Serial.parseInt();
+        stepper.moveTo(desiredPos);
+        Serial.print("desiredPos: ");
+        Serial.println(desiredPos);
+      }
+  }
+
+	// Move the motor one step
+	stepper.run();
 }
 
-void Joint::moveTo(int position) {
-    stepper.moveTo(position);
-    while (stepper.run()) {
-        // Run the stepper motor
-    }
-}
-
-void Joint::moveToDeg(int angle) {
-    int gearRatio = 80;
-    int position = angle / 360 * this->stepsPerRevolution * gearRatio;
-    stepper.moveTo(position);
-    while (stepper.run()) {
-        // Run the stepper motor
-    }
-}
+// void Joint::moveToDeg(int angle) {
+//     int gearRatio = 80;
+//     int position = angle / 360 * this->stepsPerRevolution * gearRatio;
+//     stepper.moveTo(position);
+//     while (stepper.run()) {
+//         // Run the stepper motor
+//     }
+// }

@@ -28,9 +28,8 @@ class Joint {
 public:
   Joint(int dirPin, int stepPin, int stepsPerRevolution);
   void setSpeed(float rpm);
-  void move(int steps);
-  void moveTo(int position);
-  void moveToDeg(int angle);
+  void moveTo();
+  //void moveToDeg(int angle);
 
 private:
   AccelStepper stepper;
