@@ -2,12 +2,14 @@
 
 #include <ros.h>
 #include <std_msgs/Bool.h>
-#include <std_msgs/UInt16.h>
+//#include <std_msgs/UInt16.h>
+#include <geometry_msgs/Twist.h>
 
 ros::NodeHandle node_handle;
 
-std_msgs::UInt16 command_msg;
+//std_msgs::UInt16 command_msg;
 std_msgs::Bool complete_msg;
+geometry_msgs::Twist command_msg;
 
 const int dirPin_1 = 39;
 const int stepPin_1 = 38;
@@ -25,30 +27,43 @@ Joint joint3(motorInterfaceType, stepPin_3, dirPin_3);
 
 ros::Publisher complete_publisher("arm_complete", &complete_msg);
 
-void subscriberCallback(const std_msgs::UInt16& command_msg) {
-    complete_msg.data = false;
-    complete_publisher.publish(&complete_msg);
-    // // Set the speed in RPM
-    // joint1.setSpeed(30);  // Adjust to your desired speed
-    // // Rotate the stepper motor
-    // joint1.moveTo(command_msg.data);  // Rotate 100 steps
-    // while (joint1.distanceToGo() != 0) {
-    //   complete_msg.data = false;
-    //   complete_publisher.publish(&complete_msg);
+int joint1Pos = 0;
+int joint2Pos = 0;
+int joint3Pos = 0;
+
+int joint1Vel = 0;
+int joint2Vel = 0;
+int joint3Vel = 0;
+
+void subscriberCallback(const geometry_msgs::Twist& command_msg) {
+    // complete_msg.data = false;
+    // complete_publisher.publish(&complete_msg);
+
+    joint1Pos = int(command_msg.linear.x);
+    joint2Pos = int(command_msg.linear.y);
+    joint3Pos = int(command_msg.linear.z);
+
+    joint1Vel = int(command_msg.angular.x);
+    joint2Vel = int(command_msg.angular.y);
+    joint3Vel = int(command_msg.angular.z);
+
+    // while (joint1.distanceToGo() != 0 || joint2.distanceToGo() != 0 || joint3.distanceToGo() != 0) {
+    //   ;
     // }
-    complete_msg.data = true;
-    complete_publisher.publish(&complete_msg);
+
+    // complete_msg.data = true;
+    // complete_publisher.publish(&complete_msg);
 }
 
-ros::Subscriber<std_msgs::UInt16> command_subscriber("arm_command", &subscriberCallback);
+ros::Subscriber<geometry_msgs::Twist> command_subscriber("arm_command", &subscriberCallback);
 
 void setup() {
     joint1.setup();
-    joint1.setSpeed(200);
+    //joint1.setSpeed(200);
     joint2.setup();
-    joint2.setSpeed(200);
+    //joint2.setSpeed(200);
     joint3.setup();
-    joint3.setSpeed(200);
+    //joint3.setSpeed(200);
 
     node_handle.initNode();
     node_handle.advertise(complete_publisher);
@@ -56,6 +71,17 @@ void setup() {
 }
 
 void loop() {
+
+      // Set the speed in RPM
+    joint1.setSpeed(joint1Vel);  // Adjust to your desired speed
+    joint2.setSpeed(joint2Vel);  // Adjust to your desired speed
+    joint3.setSpeed(joint3Vel);  // Adjust to your desired speed
+
+    // Rotate the stepper motor
+    joint1.moveTo(joint1Pos);  // Rotate 100 steps
+    joint2.moveTo(joint2Pos);  // Rotate 100 steps
+    joint3.moveTo(joint3Pos);  // Rotate 100 steps
+    
     // main loop code here
     node_handle.spinOnce();
 }
