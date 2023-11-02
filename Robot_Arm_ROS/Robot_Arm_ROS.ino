@@ -47,6 +47,11 @@ void subscriberCallback(const geometry_msgs::Twist& command_msg) {
     joint2Vel = int(command_msg.angular.y);
     joint3Vel = int(command_msg.angular.z);
 
+    // Set the speed in RPM
+    joint1.setSpeed(joint1Vel);  // Adjust to your desired speed
+    joint2.setSpeed(joint2Vel);  // Adjust to your desired speed
+    joint3.setSpeed(joint3Vel);  // Adjust to your desired speed
+
     // while (joint1.distanceToGo() != 0 || joint2.distanceToGo() != 0 || joint3.distanceToGo() != 0) {
     //   ;
     // }
@@ -59,11 +64,16 @@ ros::Subscriber<geometry_msgs::Twist> command_subscriber("arm_command", &subscri
 
 void setup() {
     joint1.setup();
-    //joint1.setSpeed(200);
     joint2.setup();
-    //joint2.setSpeed(200);
     joint3.setup();
-    //joint3.setSpeed(200);
+
+    // joint1.setSpeed(200);
+    // joint2.setSpeed(200);
+    // joint3.setSpeed(200);
+
+    // joint1Pos = 2000;
+    // joint2Pos = 2000;
+    // joint3Pos = 2000;
 
     node_handle.initNode();
     node_handle.advertise(complete_publisher);
@@ -71,11 +81,6 @@ void setup() {
 }
 
 void loop() {
-
-      // Set the speed in RPM
-    joint1.setSpeed(joint1Vel);  // Adjust to your desired speed
-    joint2.setSpeed(joint2Vel);  // Adjust to your desired speed
-    joint3.setSpeed(joint3Vel);  // Adjust to your desired speed
 
     // Rotate the stepper motor
     joint1.moveTo(joint1Pos);  // Rotate 100 steps
