@@ -4,7 +4,7 @@ Joint::Joint(int motorInterfaceType, int stepPin, int dirPin) : stepper(motorInt
 
 void Joint::setup() {
     stepper.setMaxSpeed(1000);
-    stepper.setAcceleration(100);
+    stepper.setAcceleration(400);
 }
 
 void Joint::setSpeed(int desiredSpeed){
