@@ -1,0 +1,39 @@
+<robot name="arm">
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://robot_support/files/base.dae"/>
+      </geometry>
+      <origin rpy="1.57075 0 0" xyz=" 0 0 0"/>
+    </visual>
+  </link>
+  
+  <link name="link_1">
+    <visual>
+      <geometry>
+        <mesh filename="package://robot_support/files/l1.dae"/>
+      </geometry>
+      <origin rpy="1.57075 0 0" xyz="-12 0 52"/>
+    </visual>
+  </link>
+  
+  <link name="link_2">
+    <visual>
+      <geometry>
+        <mesh filename="package://robot_support/files/l2.dae"/>
+      </geometry>
+      <origin rpy="3.1415 0.05 0" xyz="-85 15 480"/>
+    </visual>
+  </link>
+  
+  <joint name="base_to_l1" type="fixed">
+    <parent link="base_link"/>
+    <child link="link_1"/>
+  </joint>
+  
+  <joint name="l1_to_l2" type="fixed">
+    <parent link="link_1"/>
+    <child link="link_2"/>
+  </joint>
+  
+</robot>

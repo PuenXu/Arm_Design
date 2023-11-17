@@ -1,0 +1,14 @@
+<!-- display_urdf.launch -->
+
+<launch>
+
+  <!-- Load URDF -->
+  <param name="robot_description" command="cat" default="$(find robot_support)/files/base.urdf" />
+
+  <!-- Start robot state publisher -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+  <!-- Start RViz -->
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find robot_support)/rviz_config/my_robot_config.rviz" />
+
+</launch>

@@ -1,0 +1,48 @@
+# my_robot_config.rviz
+
+<launch>
+  <config>
+    <!-- Main panel settings -->
+    <MainWindow>
+      <Geometry>0 0 640 480</Geometry>
+    </MainWindow>
+
+    <!-- Displays -->
+    <Displays>
+      <!-- RobotModel display -->
+      <display name="RobotModel" type="rviz/RobotModel">
+        <Enabled>true</Enabled>
+        <Name>Robot Model</Name>
+        <Topic>/robot_description</Topic>
+      </display>
+
+      <!-- TF display -->
+      <display name="TF" type="rviz/TF">
+        <Enabled>true</Enabled>
+        <Name>TF</Name>
+        <Topic>/tf</Topic>
+      </display>
+
+      <!-- Camera display -->
+      <display name="Camera" type="rviz/Camera">
+        <Enabled>true</Enabled>
+        <Name>Camera</Name>
+        <Topic>/camera/image_raw</Topic>
+      </display>
+    </Displays>
+
+    <!-- Views -->
+    <Views>
+      <view type="rviz/XYOrbit" name="XY View">
+        <Enabled>true</Enabled>
+      </view>
+      <view type="rviz/TopDownOrtho" name="Top-Down View">
+        <Enabled>false</Enabled>
+      </view>
+      <view type="rviz/FrontOrtho" name="Front View">
+        <Enabled>false</Enabled>
+      </view>
+    </Views>
+
+  </config>
+</launch>
