@@ -3,8 +3,8 @@
 Joint::Joint(int motorInterfaceType, int stepPin, int dirPin) : stepper(motorInterfaceType, stepPin, dirPin) {}
 
 void Joint::setup() {
-    stepper.setMaxSpeed(1000);
-    stepper.setAcceleration(400);
+    stepper.setMaxSpeed(2000);
+    stepper.setAcceleration(500);
 }
 
 void Joint::setSpeed(int desiredSpeed){
@@ -14,8 +14,8 @@ void Joint::setSpeed(int desiredSpeed){
 void Joint::move(int desiredSteps) {
     if (stepper.distanceToGo() == 0) {
         stepper.move(desiredSteps);
-        Serial.print("desiredSteps: ");
-        Serial.println(desiredSteps);
+        // Serial.print("desiredSteps: ");
+        // Serial.println(desiredSteps);
     }
     stepper.run();
 }
@@ -23,8 +23,8 @@ void Joint::move(int desiredSteps) {
 void Joint::moveTo(int desiredPos) {
     if (stepper.distanceToGo() == 0) {
         stepper.moveTo(desiredPos);
-        Serial.print("desiredPos: ");
-        Serial.println(desiredPos);
+        // Serial.print("desiredPos: ");
+        // Serial.println(desiredPos);
     }
     stepper.run();
 }
@@ -34,8 +34,8 @@ void Joint::moveToSerial() {
         if (Serial.available()) {
             int desiredPos = Serial.parseInt();
             stepper.moveTo(desiredPos);
-            Serial.print("desiredPos: ");
-            Serial.println(desiredPos);
+            // Serial.print("desiredPos: ");
+            // Serial.println(desiredPos);
         }
     }
     stepper.run();
