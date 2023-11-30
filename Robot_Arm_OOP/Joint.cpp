@@ -14,8 +14,6 @@ void Joint::setSpeed(int desiredSpeed){
 void Joint::move(int desiredSteps) {
     if (stepper.distanceToGo() == 0) {
         stepper.move(desiredSteps);
-        // Serial.print("desiredSteps: ");
-        // Serial.println(desiredSteps);
     }
     stepper.run();
 }
@@ -23,8 +21,6 @@ void Joint::move(int desiredSteps) {
 void Joint::moveTo(int desiredPos) {
     if (stepper.distanceToGo() == 0) {
         stepper.moveTo(desiredPos);
-        // Serial.print("desiredPos: ");
-        // Serial.println(desiredPos);
     }
     stepper.run();
 }
@@ -34,8 +30,6 @@ void Joint::moveToSerial() {
         if (Serial.available()) {
             int desiredPos = Serial.parseInt();
             stepper.moveTo(desiredPos);
-            // Serial.print("desiredPos: ");
-            // Serial.println(desiredPos);
         }
     }
     stepper.run();
